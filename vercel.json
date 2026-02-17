@@ -1,0 +1,10 @@
+{
+  "outputDirectory": "recipes",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/recipe-book.html" }
+  ],
+  "functions": {
+    "api/chat.js": { "maxDuration": 60 },
+    "api/photo.js": { "maxDuration": 60 }
+  }
+}

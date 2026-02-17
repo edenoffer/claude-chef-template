@@ -1,0 +1,80 @@
+name: Claude Code
+
+on:
+  # Claude responds to @claude mentions in PR/issue comments
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+  # Auto-review on PR open/update
+  pull_request:
+    types: [opened, synchronize]
+
+  # Auto-triage bugs
+  issues:
+    types: [opened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # ─── Interactive: respond to @claude mentions ───
+  claude-interactive:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: "--max-turns 15"
+
+  # ─── Auto-review PRs ───
+  claude-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this PR. Focus on:
+
+            1. **Security** — Check API routes, auth middleware, env var exposure, XSS/injection
+            2. **Correctness** — Does the code do what it claims? Edge cases?
+            3. **Breaking changes** — Will this break the deployed Vercel app or existing recipes?
+            4. **Recipe data** — If recipe JSON or HTML was changed, verify the data structure matches CLAUDE.md
+
+            Be concise. Only flag real issues, not style nitpicks.
+          claude_args: "--max-turns 8"
+
+  # ─── Auto-fix bugs labeled 'bug' ───
+  claude-fix-bug:
+    if: |
+      github.event_name == 'issues' &&
+      contains(github.event.issue.labels.*.name, 'bug')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Fix the bug described in this issue.
+            1. Read CLAUDE.md for project context
+            2. Investigate the root cause
+            3. Implement a minimal, targeted fix
+            4. Create a PR with the fix
+          claude_args: "--max-turns 15"

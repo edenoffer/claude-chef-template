@@ -1,0 +1,2897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Recipe Book</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════
+       CSS VARIABLES — WARM PARCHMENT THEME
+       ═══════════════════════════════════════════ */
+    :root {
+      --bg-page: #f5f0e8;
+      --bg-card: #faf7f2;
+      --bg-card-hover: #ffffff;
+      --bg-modal: #faf7f2;
+      --bg-header: #c2272d;
+      --border: #e0d8cc;
+      --border-light: #ebe5da;
+      --text-primary: #2c2420;
+      --text-secondary: #6b5e54;
+      --text-muted: #a39585;
+      --text-label: #8a7d70;
+      --accent: #c2272d;
+      --accent-light: #e07a7e;
+      --accent-bg: rgba(194, 39, 45, 0.07);
+      --green: #5a7d4c;
+      --amber: #b8942e;
+      --star: #c2272d;
+      --star-empty: #d9d0c2;
+      --easy: #5a7d4c;
+      --medium: #b8942e;
+      --hard: #c2272d;
+      --shadow-sm: 0 1px 3px rgba(44,36,32,0.04);
+      --shadow-md: 0 4px 12px rgba(44,36,32,0.06);
+      --shadow-lg: 0 8px 30px rgba(44,36,32,0.10);
+      --radius: 4px;
+      --font-serif: 'Cormorant Garamond', 'Georgia', serif;
+      --font-sans: 'DM Sans', 'Helvetica Neue', sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESET & BASE
+       ═══════════════════════════════════════════ */
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══════════════════════════════════════════
+       HEADER — BOOK COVER FEEL
+       ═══════════════════════════════════════════ */
+    header {
+      background: var(--bg-header);
+      color: #f5f0e8;
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 39px,
+        rgba(245,240,232,0.03) 39px,
+        rgba(245,240,232,0.03) 40px
+      );
+      pointer-events: none;
+    }
+
+    .header-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 1rem;
+    }
+
+    .header-title {
+      font-family: var(--font-serif);
+      font-size: 3.5rem;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-subtitle {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: rgba(245,240,232,0.5);
+      font-style: italic;
+    }
+
+    .header-divider {
+      width: 40px;
+      height: 2px;
+      background: rgba(255,255,255,0.3);
+      margin: 1rem auto;
+    }
+
+    .header-count {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.35);
+    }
+
+    .settings-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: 1px solid rgba(245,240,232,0.15);
+      color: rgba(245,240,232,0.4);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .settings-btn:hover {
+      border-color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* ═══════════════════════════════════════════
+       TOOLBAR — FILTERS & SEARCH
+       ═══════════════════════════════════════════ */
+    .toolbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 0;
+    }
+
+    .toolbar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 0 1 280px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.5rem 0.5rem 0.5rem 2rem;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-box::before {
+      content: '\2315';
+      position: absolute;
+      left: 0.65rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .view-btn {
+      padding: 0.4rem 0.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      background: var(--bg-card);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .view-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .filter-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-right: 0.25rem;
+    }
+
+    .filter-pill {
+      padding: 0.3rem 0.7rem;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-pill:hover {
+      border-color: var(--text-muted);
+    }
+
+    .filter-pill.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .filter-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+      margin: 0 0.5rem;
+    }
+
+    /* ═══════════════════════════════════════════
+       GRID VIEW — RECIPE CARDS
+       ═══════════════════════════════════════════ */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 4rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--accent-light);
+    }
+
+    .card-image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      display: block;
+      background: var(--border-light);
+    }
+
+    .card-image-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .card-body {
+      padding: 1.25rem 1.25rem 1rem;
+    }
+
+    .card-cuisine {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+      color: var(--text-primary);
+    }
+
+    .card-description {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .card-meta-item {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .card-meta-item span {
+      color: var(--text-secondary);
+    }
+
+    .difficulty-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      border: 1px solid;
+    }
+
+    .difficulty-badge.easy { color: var(--easy); border-color: var(--easy); background: rgba(90,125,76,0.06); }
+    .difficulty-badge.medium { color: var(--medium); border-color: var(--medium); background: rgba(184,148,46,0.06); }
+    .difficulty-badge.hard { color: var(--hard); border-color: var(--hard); background: rgba(192,92,60,0.06); }
+
+    .card-stars {
+      margin-left: auto;
+      display: flex;
+      gap: 2px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════
+       LIST VIEW
+       ═══════════════════════════════════════════ */
+    .list {
+      display: none;
+    }
+
+    .list.active {
+      display: block;
+    }
+
+    .grid.hidden {
+      display: none;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .list-item:hover {
+      background: rgba(255,255,255,0.5);
+      margin: 0 -1rem;
+      padding: 1rem;
+      border-radius: var(--radius);
+    }
+
+    .list-thumb {
+      width: 72px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      flex-shrink: 0;
+      background: var(--border-light);
+    }
+
+    .list-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .list-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 400;
+    }
+
+    .list-detail {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .list-stars {
+      display: flex;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════
+       STARS
+       ═══════════════════════════════════════════ */
+    .star {
+      cursor: pointer;
+      color: var(--star-empty);
+      font-size: 0.85rem;
+      transition: color 0.15s;
+      user-select: none;
+    }
+
+    .star.filled { color: var(--star); }
+    .star:hover { color: var(--star); }
+
+    .star-lg {
+      font-size: 1.2rem;
+    }
+
+    /* ═══════════════════════════════════════════
+       MODAL — RECIPE DETAIL (BOOK PAGE FEEL)
+       ═══════════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(44, 36, 32, 0.5);
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .modal {
+      background: var(--bg-modal);
+      max-width: 900px;
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      margin: 2rem auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      z-index: 10;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .modal-hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .modal-image {
+      width: 100%;
+      height: 100%;
+      min-height: 350px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .modal-image-placeholder {
+      width: 100%;
+      min-height: 350px;
+      background: var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 3rem;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+    .modal-image-loading {
+      width: 100%;
+      min-height: 350px;
+      background: var(--border-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+    }
+    .modal-image-loading .photo-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: photoSpin 0.8s linear infinite;
+    }
+    @keyframes photoSpin {
+      to { transform: rotate(360deg); }
+    }
+    .modal-image-error {
+      width: 100%;
+      min-height: 350px;
+      background: var(--border-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--accent);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+    }
+
+    .modal-header {
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .modal-cuisine {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .modal-description {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-meta-cell {
+      padding: 0.75rem 0;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+
+    .modal-meta-cell:last-child { border-right: none; }
+
+    .modal-meta-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-meta-value {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .modal-stars-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .modal-stars-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* Recipe content sections */
+    .modal-content {
+      padding: 2rem 2rem 3rem;
+    }
+
+    .recipe-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .recipe-section-title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    /* Equipment */
+    .equipment-list {
+      list-style: none;
+      columns: 2;
+      gap: 1rem;
+    }
+
+    .equipment-list li {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      padding: 0.25rem 0;
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .equipment-list li::before {
+      content: '\2022';
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+
+    /* Ingredients table */
+    .ingredients-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .ingredients-section-header td {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 1rem 0 0.5rem;
+      font-weight: 500;
+    }
+
+    .ingredients-table tr:not(.ingredients-section-header) td {
+      padding: 0.4rem 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .ingredients-table .ing-item { color: var(--text-primary); width: 50%; }
+    .ingredients-table .ing-cups { color: var(--text-secondary); width: 25%; font-family: var(--font-mono); font-size: 0.8rem; }
+    .ingredients-table .ing-grams { color: var(--text-muted); width: 25%; font-family: var(--font-mono); font-size: 0.8rem; }
+
+    /* Instructions */
+    .instructions-list {
+      list-style: none;
+      counter-reset: step;
+    }
+
+    .instructions-list li {
+      counter-increment: step;
+      position: relative;
+      padding: 0.75rem 0 0.75rem 3rem;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .instructions-list li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0.75rem;
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--accent);
+      width: 2rem;
+      text-align: center;
+    }
+
+    .instructions-list li:last-child { border-bottom: none; }
+
+    /* Chef's Notes */
+    .chefs-notes {
+      background: var(--accent-bg);
+      border-left: 3px solid var(--accent);
+      padding: 1.25rem 1.5rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    .chefs-notes-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .chefs-notes ul {
+      list-style: none;
+    }
+
+    .chefs-notes li {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      padding: 0.3rem 0;
+      padding-left: 1rem;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    .chefs-notes li::before {
+      content: '\2014';
+      position: absolute;
+      left: 0;
+      color: var(--accent-light);
+    }
+
+    /* Inspired by */
+    .inspired-by {
+      font-family: var(--font-serif);
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    /* Modal actions */
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .modal-btn {
+      padding: 0.5rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Three-dot menu */
+    .modal-menu-wrapper {
+      position: absolute;
+      top: 1rem;
+      right: 3.5rem;
+      z-index: 9;
+    }
+    .modal-menu-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.35);
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .modal-menu-btn:hover {
+      background: rgba(0,0,0,0.55);
+      border-color: rgba(255,255,255,0.5);
+    }
+    .modal-menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 38px;
+      right: 0;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      min-width: 160px;
+      overflow: hidden;
+    }
+    .modal-menu-dropdown.active { display: block; }
+    .modal-menu-item {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .modal-menu-item:hover { background: #f5f5f5; }
+    .modal-menu-item.danger { color: var(--accent); }
+    .modal-menu-item.danger:hover { background: #fef2f2; }
+
+    /* Confirm dialog */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1100;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirm-overlay.active { display: flex; }
+    .confirm-dialog {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .confirm-dialog h3 {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      margin: 0 0 0.5rem;
+    }
+    .confirm-dialog p {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin: 0 0 1.5rem;
+    }
+    .confirm-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    .confirm-btn {
+      padding: 0.5rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .confirm-btn-cancel {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .confirm-btn-cancel:hover { background: #f5f5f5; }
+    .confirm-btn-delete {
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      color: #fff;
+    }
+    .confirm-btn-delete:hover { background: #a01f25; }
+
+    .modal-tags {
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    /* ═══════════════════════════════════════════
+       SETTINGS PANEL
+       ═══════════════════════════════════════════ */
+    .settings-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 320px;
+      height: 100%;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      z-index: 2000;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .settings-panel.active { display: block; }
+
+    .settings-panel h3 {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+    }
+
+    .settings-field {
+      margin-bottom: 1.25rem;
+    }
+
+    .settings-field label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .settings-field input {
+      width: 100%;
+      padding: 0.5rem;
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .settings-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* ═══════════════════════════════════════════
+       EMPTY STATE
+       ═══════════════════════════════════════════ */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      display: none;
+    }
+
+    .empty-state.active { display: block; }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    .empty-state p {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .empty-state .hint {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      font-style: normal;
+    }
+
+    /* ═══════════════════════════════════════════
+       TOAST
+       ═══════════════════════════════════════════ */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text-primary);
+      color: var(--bg-page);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      z-index: 3000;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast.active {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ═══════════════════════════════════════════
+       CHAT INTERFACE
+       ═══════════════════════════════════════════ */
+    .chat-fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(194,39,45,0.35);
+      z-index: 2000;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-fab:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 24px rgba(194,39,45,0.45);
+    }
+    .chat-fab.hidden { display: none; }
+
+    .chat-panel {
+      position: fixed;
+      top: 0;
+      right: -440px;
+      width: 420px;
+      height: 100vh;
+      height: 100dvh;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      z-index: 2500;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s ease;
+      box-shadow: -4px 0 24px rgba(44,36,32,0.1);
+      overflow: hidden;
+    }
+    .chat-panel.active { right: 0; }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-header);
+      flex-shrink: 0;
+    }
+    .chat-header h3 {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+      margin: 0;
+    }
+    .chat-header-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0 0.25rem;
+      line-height: 1;
+    }
+    .chat-header-close:hover { color: white; }
+
+    .chat-messages {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .chat-msg {
+      max-width: 90%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+    .chat-msg-user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg-assistant {
+      align-self: flex-start;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      border: 1px solid var(--border-light);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-msg-assistant h1,
+    .chat-msg-assistant h2,
+    .chat-msg-assistant h3 {
+      font-family: var(--font-serif);
+      margin: 0.5em 0 0.25em;
+    }
+    .chat-msg-assistant h1 { font-size: 1.1rem; }
+    .chat-msg-assistant h2 { font-size: 1rem; }
+    .chat-msg-assistant h3 { font-size: 0.9rem; }
+    .chat-msg-assistant strong { font-weight: 600; }
+    .chat-msg-assistant ul, .chat-msg-assistant ol {
+      margin: 0.25em 0;
+      padding-left: 1.25em;
+    }
+    .chat-msg-assistant table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.5em 0;
+      font-size: 0.8rem;
+    }
+    .chat-msg-assistant th, .chat-msg-assistant td {
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.5rem;
+      text-align: left;
+    }
+    .chat-msg-assistant th {
+      background: var(--bg-page);
+      font-weight: 600;
+    }
+    .chat-msg-assistant code {
+      background: var(--bg-page);
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.8em;
+    }
+    .chat-msg-system {
+      align-self: center;
+      background: none;
+      border: 1px dashed var(--border);
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 0.8rem;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .chat-typing {
+      display: inline-flex;
+      gap: 4px;
+      padding: 0.5rem 0;
+    }
+    .chat-typing span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: chatBounce 1.2s infinite;
+    }
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes chatBounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--border);
+      background: var(--bg-card);
+      flex-shrink: 0;
+    }
+    .chat-input-row textarea {
+      flex: 1;
+      resize: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      outline: none;
+      min-height: 40px;
+      max-height: 120px;
+    }
+    .chat-input-row textarea:focus { border-color: var(--accent); }
+    .chat-input-row textarea::placeholder { color: var(--text-muted); }
+    .chat-input-row button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0 1rem;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .chat-input-row button:hover { background: #a82024; }
+    .chat-input-row button:disabled { background: var(--border); cursor: not-allowed; }
+    .chat-img-btn {
+      background: none !important;
+      color: var(--text-muted);
+      padding: 0 0.4rem !important;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+    .chat-img-btn:hover { color: var(--accent) !important; background: none !important; }
+    .chat-img-preview {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem 0;
+      flex-shrink: 0;
+    }
+    .chat-img-preview img {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    .chat-img-preview .chat-img-remove {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0;
+    }
+    .chat-img-preview .chat-img-remove:hover { color: var(--accent); }
+    .chat-msg-user img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 0.25rem;
+    }
+
+    /* ═══════════════════════════════════════════
+       CHAT HISTORY DROPDOWN
+       ═══════════════════════════════════════════ */
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 0;
+    }
+    .chat-history-select {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: var(--radius);
+      padding: 0.2rem 0.35rem;
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      max-width: 140px;
+      cursor: pointer;
+      outline: none;
+      text-overflow: ellipsis;
+    }
+    .chat-history-select option {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+    .chat-new-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.7);
+      border-radius: var(--radius);
+      padding: 0.15rem 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .chat-new-btn:hover {
+      border-color: rgba(255,255,255,0.6);
+      color: white;
+    }
+
+    /* ═══════════════════════════════════════════
+       LOGIN OVERLAY
+       ═══════════════════════════════════════════ */
+    .login-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(44, 36, 32, 0.85);
+      z-index: 5000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(4px);
+    }
+    .login-overlay.active { display: flex; }
+    .login-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+    .login-card h2 {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+    .login-card p {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      outline: none;
+      margin-bottom: 1rem;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .login-card input:focus { border-color: var(--accent); }
+    .login-card button {
+      width: 100%;
+      padding: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-card button:hover { background: #a82024; }
+    .login-error {
+      color: var(--accent);
+      font-size: 0.8rem;
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    /* Password field in settings */
+    .password-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .password-row input { flex: 1; }
+    .password-row button {
+      padding: 0.35rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .password-row button:hover { background: #a82024; }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — KITCHEN PHONE MODE
+       ═══════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      header { padding: 2rem 1.5rem; }
+      .header-title { font-size: 2.5rem; }
+      .toolbar { padding: 1rem 1rem 0; }
+      .container { padding: 1rem 1rem 3rem; }
+      .grid { grid-template-columns: 1fr; gap: 1rem; }
+      .filter-row { gap: 0.3rem; }
+      .filter-pill { font-size: 0.7rem; padding: 0.25rem 0.6rem; }
+      .modal { margin: 0.5rem; }
+      .modal-hero { grid-template-columns: 1fr; }
+      .modal-image, .modal-image-placeholder { min-height: 250px; }
+      .modal-header { padding: 1.5rem; }
+      .modal-title { font-size: 1.8rem; }
+      .modal-content { padding: 1.5rem; }
+      .equipment-list { columns: 1; }
+      .instructions-list li { font-size: 1rem; line-height: 1.8; }
+      .settings-panel { width: 100%; }
+      .chat-panel { width: 100%; right: -100%; }
+      .chat-fab { bottom: 1.5rem; right: 1.5rem; width: 48px; height: 48px; font-size: 1.3rem; }
+    }
+
+    @media (max-width: 480px) {
+      .header-title { font-size: 2rem; }
+      .search-box { flex: 1 1 100%; }
+      .card-title { font-size: 1.3rem; }
+      .modal-meta-grid { grid-template-columns: 1fr; }
+      .modal-meta-cell { border-right: none; border-bottom: 1px solid var(--border); text-align: left; padding: 0.5rem 0; }
+      .modal-meta-cell:last-child { border-bottom: none; }
+    }
+
+    /* ═══════════════════════════════════════════
+       PRINT STYLES
+       ═══════════════════════════════════════════ */
+    @media print {
+      body { background: white; color: black; }
+      header, .toolbar, .modal-close, .modal-actions, .modal-overlay, .chat-fab, .chat-panel { display: none !important; }
+      .modal {
+        position: static;
+        box-shadow: none;
+        border: none;
+        max-width: 100%;
+      }
+      .modal-hero { grid-template-columns: 200px 1fr; }
+      .modal-image { max-height: 200px; }
+      .recipe-section-title { font-size: 1.2rem; }
+      .instructions-list li { font-size: 0.85rem; page-break-inside: avoid; }
+      .chefs-notes { background: #f5f5f5; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <button class="settings-btn" onclick="toggleSettings()" title="Settings">&#9881;</button>
+    <div class="header-label">[ a personal collection ]</div>
+    <h1 class="header-title" id="library-title">My Recipe Book</h1>
+    <div class="header-divider"></div>
+    <p class="header-subtitle" id="library-subtitle">Collected, refined &amp; cooked with love</p>
+    <div class="header-count" id="recipe-count"></div>
+  </header>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toolbar-top">
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search recipes...">
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" data-view="grid" onclick="setView('grid')">Grid</button>
+        <button class="view-btn" data-view="list" onclick="setView('list')">List</button>
+      </div>
+    </div>
+    <div class="filter-row" id="filters">
+      <span class="filter-label">Cuisine</span>
+      <!-- Cuisine filters rendered by JS -->
+      <div class="filter-divider"></div>
+      <span class="filter-label">Difficulty</span>
+      <button class="filter-pill diff-filter" data-diff="all" onclick="setDifficulty('all')">All</button>
+      <button class="filter-pill diff-filter" data-diff="Easy" onclick="setDifficulty('Easy')">Easy</button>
+      <button class="filter-pill diff-filter" data-diff="Medium" onclick="setDifficulty('Medium')">Medium</button>
+      <button class="filter-pill diff-filter" data-diff="Hard" onclick="setDifficulty('Hard')">Hard</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <div class="grid" id="grid-view"></div>
+    <div class="list" id="list-view"></div>
+    <div class="empty-state" id="empty-state">
+      <div class="empty-state-icon">&#127859;</div>
+      <p>No recipes yet, chef.</p>
+      <div class="hint">Run /cook in Claude to add your first recipe</div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" id="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModalDirect()">&times;</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PANEL -->
+  <div class="settings-panel" id="settings-panel">
+    <button class="settings-close" onclick="toggleSettings()">&times;</button>
+    <h3>Settings</h3>
+    <div class="settings-field">
+      <label>Book Title</label>
+      <input type="text" id="setting-title" placeholder="My Recipe Book" oninput="updateSettings()">
+    </div>
+    <div class="settings-field">
+      <label>Subtitle</label>
+      <input type="text" id="setting-subtitle" placeholder="Collected, refined & cooked with love" oninput="updateSettings()">
+    </div>
+    <div class="settings-field">
+      <label>Password (optional)</label>
+      <div class="password-row">
+        <input type="password" id="setting-password" placeholder="Leave empty for no password">
+        <button onclick="savePassword()">Set</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT FAB -->
+  <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="Talk to your sous chef">&#x1F468;&#x200D;&#x1F373;</button>
+
+  <!-- CHAT PANEL -->
+  <div class="chat-panel" id="chat-panel">
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <h3>Sous Chef</h3>
+        <select class="chat-history-select" id="chat-history-select" onchange="loadChat(this.value)" title="Chat history">
+          <option value="current">New chat</option>
+        </select>
+      </div>
+      <button class="chat-new-btn" onclick="newChat()" title="Start a new conversation">+ New</button>
+      <button class="chat-header-close" onclick="toggleChat()">&times;</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-msg chat-msg-assistant">Yes, chef. What are we cooking today?</div>
+    </div>
+    <div class="chat-img-preview" id="chat-img-preview" style="display:none">
+      <img id="chat-img-thumb" src="" alt="attached image">
+      <button class="chat-img-remove" onclick="clearChatImage()" title="Remove image">&times;</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="file" id="chat-img-input" accept="image/*" style="display:none" onchange="handleChatImage(this.files)">
+      <button class="chat-img-btn" onclick="document.getElementById('chat-img-input').click()" title="Attach photo">&#128247;</button>
+      <textarea id="chat-input" placeholder="What should we cook today, chef?" rows="1"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+      <button id="chat-send" onclick="sendChat()">Send</button>
+    </div>
+  </div>
+
+  <!-- LOGIN OVERLAY -->
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-card">
+      <h2>Welcome, Chef</h2>
+      <p>This recipe book is password-protected.</p>
+      <input type="password" id="login-password" placeholder="Enter password"
+             onkeydown="if(event.key==='Enter') attemptLogin()">
+      <button onclick="attemptLogin()">Enter Kitchen</button>
+      <div class="login-error" id="login-error"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Confirm dialog -->
+  <div class="confirm-overlay" id="confirm-overlay" onclick="if(event.target===this)closeConfirm()">
+    <div class="confirm-dialog">
+      <h3 id="confirm-title">Are you sure?</h3>
+      <p id="confirm-message"></p>
+      <div class="confirm-buttons">
+        <button class="confirm-btn confirm-btn-cancel" onclick="closeConfirm()">Cancel</button>
+        <button class="confirm-btn confirm-btn-delete" id="confirm-action">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════
+    // RECIPE DATA — Claude adds entries here
+    // Embedded recipes serve as fallback for local/offline use.
+    // When deployed, /api/recipes merges these with web-created recipes.
+    // ═══════════════════════════════════════════
+    let recipes = [];
+    const BUNDLED_RECIPES = [];
+
+    // ═══════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════
+    let currentView = localStorage.getItem('viewMode') || 'grid';
+    let currentCuisine = 'all';
+    let currentDifficulty = 'all';
+    let searchQuery = '';
+    let ratings = JSON.parse(localStorage.getItem('recipeRatings') || '{}');
+    let chatMessages = []; // conversation history for Claude API
+    let currentChatId = null;
+    let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+
+    // ═══════════════════════════════════════════
+    // INIT — async, fetches from API with localStorage fallback
+    // ═══════════════════════════════════════════
+    async function init() {
+      // Check if password protection is active
+      const authed = await checkAuth();
+      if (!authed) return; // Login overlay shown; init() re-called after login
+
+      // Initialize chat history
+      initChatHistory();
+
+      // Load recipes from API (falls back to BUNDLED_RECIPES for local/offline)
+      try {
+        const recipesResp = await fetch('/api/recipes');
+        if (recipesResp.ok) {
+          recipes = await recipesResp.json();
+        } else {
+          recipes = [...BUNDLED_RECIPES];
+        }
+      } catch (e) {
+        recipes = [...BUNDLED_RECIPES];
+      }
+
+      // Load settings: localStorage first (instant), then API overlay
+      const savedTitle = localStorage.getItem('libraryTitle');
+      const savedSubtitle = localStorage.getItem('librarySubtitle');
+      if (savedTitle) {
+        document.getElementById('library-title').textContent = savedTitle;
+        document.getElementById('setting-title').value = savedTitle;
+      }
+      if (savedSubtitle) {
+        document.getElementById('library-subtitle').textContent = savedSubtitle;
+        document.getElementById('setting-subtitle').value = savedSubtitle;
+      }
+      try {
+        const settingsResp = await fetch('/api/settings');
+        if (settingsResp.ok) {
+          const settings = await settingsResp.json();
+          if (settings.title) {
+            document.getElementById('library-title').textContent = settings.title;
+            document.getElementById('setting-title').value = settings.title;
+            localStorage.setItem('libraryTitle', settings.title);
+          }
+          if (settings.subtitle) {
+            document.getElementById('library-subtitle').textContent = settings.subtitle;
+            document.getElementById('setting-subtitle').value = settings.subtitle;
+            localStorage.setItem('librarySubtitle', settings.subtitle);
+          }
+        }
+      } catch (e) { /* localStorage already applied above */ }
+
+      // Load ratings from API (falls back to localStorage)
+      try {
+        const ratingsResp = await fetch('/api/ratings');
+        if (ratingsResp.ok) {
+          const apiRatings = await ratingsResp.json();
+          if (Object.keys(apiRatings).length > 0) {
+            ratings = apiRatings;
+          }
+        }
+      } catch (e) {
+        // Keep localStorage ratings
+      }
+
+      // Apply ratings
+      recipes.forEach(r => {
+        if (ratings[r.slug]) r.rating = ratings[r.slug];
+      });
+
+      buildCuisineFilters();
+      setView(currentView);
+      render();
+
+      // Search
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        render();
+      });
+
+      // Escape closes modal or chat
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (document.getElementById('chat-panel').classList.contains('active')) {
+            toggleChat();
+          } else {
+            closeModalDirect();
+          }
+        }
+      });
+    }
+
+    // ═══════════════════════════════════════════
+    // FILTERS
+    // ═══════════════════════════════════════════
+    function buildCuisineFilters() {
+      const cuisines = [...new Set(recipes.map(r => r.cuisine).filter(Boolean))].sort();
+      const filterRow = document.getElementById('filters');
+      const firstDivider = filterRow.querySelector('.filter-divider');
+
+      // Remove old cuisine pills
+      filterRow.querySelectorAll('.cuisine-filter').forEach(el => el.remove());
+
+      // Add "All" + each cuisine
+      const allBtn = document.createElement('button');
+      allBtn.className = 'filter-pill cuisine-filter active';
+      allBtn.dataset.cuisine = 'all';
+      allBtn.textContent = 'All';
+      allBtn.onclick = () => setCuisine('all');
+      firstDivider.before(allBtn);
+
+      cuisines.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-pill cuisine-filter';
+        btn.dataset.cuisine = c;
+        btn.textContent = c;
+        btn.onclick = () => setCuisine(c);
+        firstDivider.before(btn);
+      });
+    }
+
+    function setCuisine(cuisine) {
+      currentCuisine = cuisine;
+      document.querySelectorAll('.cuisine-filter').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.cuisine === cuisine);
+      });
+      render();
+    }
+
+    function setDifficulty(diff) {
+      currentDifficulty = diff;
+      document.querySelectorAll('.diff-filter').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.diff === diff);
+      });
+      render();
+    }
+
+    function getFiltered() {
+      return recipes.filter(r => {
+        if (currentCuisine !== 'all' && (r.cuisine || '') !== currentCuisine) return false;
+        if (currentDifficulty !== 'all' && (r.difficulty || '') !== currentDifficulty) return false;
+        if (searchQuery) {
+          const hay = [r.title, r.description, r.cuisine, ...(r.tags || []), ...((r.ingredients || []).map(i => i.item || ''))].join(' ').toLowerCase();
+          if (!hay.includes(searchQuery)) return false;
+        }
+        return true;
+      });
+    }
+
+    // ═══════════════════════════════════════════
+    // VIEW
+    // ═══════════════════════════════════════════
+    function setView(view) {
+      currentView = view;
+      localStorage.setItem('viewMode', view);
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === view);
+      });
+      const gridEl = document.getElementById('grid-view');
+      const listEl = document.getElementById('list-view');
+      if (view === 'grid') {
+        gridEl.classList.remove('hidden');
+        listEl.classList.remove('active');
+      } else {
+        gridEl.classList.add('hidden');
+        listEl.classList.add('active');
+      }
+      render();
+    }
+
+    // ═══════════════════════════════════════════
+    // RENDER
+    // ═══════════════════════════════════════════
+    function render() {
+      const filtered = getFiltered();
+      const emptyEl = document.getElementById('empty-state');
+      const countEl = document.getElementById('recipe-count');
+
+      countEl.textContent = `${recipes.length} recipe${recipes.length !== 1 ? 's' : ''} in collection`;
+
+      if (filtered.length === 0) {
+        document.getElementById('grid-view').innerHTML = '';
+        document.getElementById('list-view').innerHTML = '';
+        emptyEl.classList.add('active');
+        if (recipes.length > 0) {
+          emptyEl.querySelector('p').textContent = 'No recipes match your filters.';
+          emptyEl.querySelector('.hint').textContent = 'Try adjusting your search or filters';
+        }
+        return;
+      }
+
+      emptyEl.classList.remove('active');
+      renderGrid(filtered);
+      renderList(filtered);
+    }
+
+    function renderGrid(items) {
+      const grid = document.getElementById('grid-view');
+      grid.innerHTML = items.map(r => {
+        const cuisine = r.cuisine || '';
+        const description = r.description || '';
+        const difficulty = r.difficulty || 'Medium';
+        const totalTime = r.totalTime || '';
+        const serves = r.serves || '';
+        const tags = r.tags || [];
+        return `
+        <div class="card" onclick="openRecipe('${r.slug}')">
+          ${r.photo
+            ? `<img class="card-image" src="${r.photo}" alt="${r.title}" loading="lazy" onerror="this.outerHTML='<div class=\\'card-image-placeholder\\'>${r.title[0]}</div>'">`
+            : `<div class="card-image-placeholder">${r.title[0]}</div>`
+          }
+          <div class="card-body">
+            <div class="card-cuisine">${cuisine}</div>
+            <div class="card-title">${r.title}</div>
+            <div class="card-description">${description}</div>
+            <div class="card-meta">
+              <span class="card-meta-item"><span>${totalTime}</span> min</span>
+              <span class="difficulty-badge ${difficulty.toLowerCase()}">${difficulty}</span>
+              <span class="card-meta-item"><span>${serves}</span> serves</span>
+              <div class="card-stars">${renderStars(r, false)}</div>
+            </div>
+            <div class="card-tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+          </div>
+        </div>
+      `}).join('');
+    }
+
+    function renderList(items) {
+      const list = document.getElementById('list-view');
+      list.innerHTML = items.map(r => {
+        const cuisine = r.cuisine || '';
+        const difficulty = r.difficulty || 'Medium';
+        const totalTime = r.totalTime || '';
+        const serves = r.serves || '';
+        return `
+        <div class="list-item" onclick="openRecipe('${r.slug}')">
+          ${r.photo
+            ? `<img class="list-thumb" src="${r.photo}" alt="${r.title}" loading="lazy" onerror="this.style.display='none'">`
+            : `<div class="list-thumb" style="display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-style:italic;color:var(--text-muted);">${r.title[0]}</div>`
+          }
+          <div class="list-info">
+            <div class="list-title">${r.title}</div>
+            <div class="list-detail">${cuisine} &middot; ${totalTime} min &middot; ${difficulty} &middot; serves ${serves}</div>
+          </div>
+          <div class="list-stars">${renderStars(r, false)}</div>
+        </div>
+      `}).join('');
+    }
+
+    // ═══════════════════════════════════════════
+    // STARS
+    // ═══════════════════════════════════════════
+    function renderStars(recipe, large) {
+      const cls = large ? 'star star-lg' : 'star';
+      return [1,2,3,4,5].map(i =>
+        `<span class="${cls} ${i <= recipe.rating ? 'filled' : ''}" onclick="event.stopPropagation();rateRecipe('${recipe.slug}',${i})">\u2605</span>`
+      ).join('');
+    }
+
+    function rateRecipe(slug, rating) {
+      const recipe = recipes.find(r => r.slug === slug);
+      if (!recipe) return;
+      recipe.rating = recipe.rating === rating ? 0 : rating;
+      ratings[slug] = recipe.rating;
+
+      // Persist to API (fire-and-forget) with localStorage fallback
+      fetch('/api/ratings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug, rating: recipe.rating })
+      }).catch(() => {
+        localStorage.setItem('recipeRatings', JSON.stringify(ratings));
+      });
+
+      render();
+      // Re-render modal if open
+      const overlay = document.getElementById('modal-overlay');
+      if (overlay.classList.contains('active')) {
+        openRecipe(recipe.id);
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // MODAL — RECIPE DETAIL
+    // ═══════════════════════════════════════════
+    function openRecipe(id) {
+      const r = typeof id === 'string'
+        ? recipes.find(x => x.slug === id) || recipes.find(x => x.id === id)
+        : recipes.find(x => x.id === id);
+      if (!r) return;
+
+      // Ensure arrays exist (KV recipes may have missing optional fields)
+      r.tags = r.tags || [];
+      r.chefsNotes = r.chefsNotes || [];
+      r.equipment = r.equipment || [];
+      r.ingredients = r.ingredients || [];
+      r.instructions = r.instructions || [];
+
+      const mc = document.getElementById('modal-content');
+
+      // Build ingredients table
+      let ingRows = '';
+      r.ingredients.forEach(ing => {
+        if (ing.section) {
+          ingRows += `<tr class="ingredients-section-header"><td colspan="3">${ing.section}</td></tr>`;
+        } else {
+          const note = ing.note ? ` <span style="color:var(--text-muted);font-style:italic;font-size:0.75rem;">(${ing.note})</span>` : '';
+          ingRows += `<tr>
+            <td class="ing-item">${ing.item}${note}</td>
+            <td class="ing-cups">${ing.cups || ''}</td>
+            <td class="ing-grams">${ing.grams || ''}</td>
+          </tr>`;
+        }
+      });
+
+      mc.innerHTML = `
+        <div class="modal-hero" style="position:relative;">
+          <div class="modal-menu-wrapper">
+            <button class="modal-menu-btn" onclick="event.stopPropagation();toggleRecipeMenu()" title="More options">&#8942;</button>
+            <div class="modal-menu-dropdown" id="recipe-menu-dropdown">
+              <button class="modal-menu-item danger" onclick="confirmDeleteRecipe('${r.slug}','${r.title.replace(/'/g, "\\'")}')">Delete Recipe</button>
+            </div>
+          </div>
+          ${r.photo
+            ? `<img class="modal-image" src="${r.photo}" alt="${r.title}" onerror="this.outerHTML='<div class=\\'modal-image-placeholder\\'>${r.title[0]}</div>'">`
+            : `<div class="modal-image-placeholder">${r.title[0]}</div>`
+          }
+          <div class="modal-header">
+            <div class="modal-cuisine">${r.cuisine || ''}</div>
+            <h2 class="modal-title">${r.title}</h2>
+            <p class="modal-description">${r.description || ''}</p>
+            <div class="modal-meta-grid">
+              <div class="modal-meta-cell">
+                <div class="modal-meta-label">Prep Time</div>
+                <div class="modal-meta-value">${r.prepTime || '—'} min</div>
+              </div>
+              <div class="modal-meta-cell">
+                <div class="modal-meta-label">Cook Time</div>
+                <div class="modal-meta-value">${r.cookTime || '—'} min</div>
+              </div>
+              <div class="modal-meta-cell">
+                <div class="modal-meta-label">Serves</div>
+                <div class="modal-meta-value">${r.serves || '—'}</div>
+              </div>
+            </div>
+            <div class="modal-stars-row">
+              <span class="modal-stars-label">Your rating</span>
+              ${renderStars(r, true)}
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-content">
+          <!-- Equipment -->
+          <div class="recipe-section">
+            <h3 class="recipe-section-title">Equipment</h3>
+            <ul class="equipment-list">
+              ${r.equipment.map(e => `<li>${e}</li>`).join('')}
+            </ul>
+          </div>
+
+          <!-- Ingredients -->
+          <div class="recipe-section">
+            <h3 class="recipe-section-title">Ingredients</h3>
+            <table class="ingredients-table">
+              <thead>
+                <tr>
+                  <td class="ing-item" style="font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);padding-bottom:0.5rem;">Ingredient</td>
+                  <td class="ing-cups" style="font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);padding-bottom:0.5rem;">Amount</td>
+                  <td class="ing-grams" style="font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);padding-bottom:0.5rem;">Grams</td>
+                </tr>
+              </thead>
+              <tbody>${ingRows}</tbody>
+            </table>
+          </div>
+
+          <!-- Instructions -->
+          <div class="recipe-section">
+            <h3 class="recipe-section-title">Instructions</h3>
+            <ol class="instructions-list">
+              ${r.instructions.map(s => `<li>${s}</li>`).join('')}
+            </ol>
+          </div>
+
+          <!-- Chef's Notes -->
+          ${r.chefsNotes && r.chefsNotes.length > 0 ? `
+          <div class="recipe-section">
+            <div class="chefs-notes">
+              <div class="chefs-notes-title">Chef\u2019s Notes</div>
+              <ul>
+                ${r.chefsNotes.map(n => `<li>${n}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- Inspired By -->
+          ${r.inspiredBy ? `<div class="inspired-by">Inspired by: ${r.inspiredBy}</div>` : ''}
+
+          <!-- Tags -->
+          <div class="modal-tags">
+            ${r.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+          </div>
+
+          <!-- Actions -->
+          <div class="modal-actions">
+            <button class="modal-btn" onclick="window.print()">&#9113; Print</button>
+            <button class="modal-btn" onclick="showToast('Run: /cook ${r.title} \u2014 improve');copyText('/cook ${r.title} -- improve')">Improve This Recipe</button>
+            <button class="modal-btn" id="regen-photo-btn" onclick="regeneratePhoto('${r.slug}')">New Photo</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('modal-overlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(e) {
+      if (e.target === document.getElementById('modal-overlay')) {
+        closeModalDirect();
+      }
+    }
+
+    function closeModalDirect() {
+      document.getElementById('modal-overlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Three-dot menu
+    function toggleRecipeMenu() {
+      const dd = document.getElementById('recipe-menu-dropdown');
+      dd.classList.toggle('active');
+    }
+    document.addEventListener('click', () => {
+      const dd = document.getElementById('recipe-menu-dropdown');
+      if (dd) dd.classList.remove('active');
+    });
+
+    // Delete recipe with confirmation
+    let pendingDeleteSlug = null;
+    function confirmDeleteRecipe(slug, title) {
+      pendingDeleteSlug = slug;
+      document.getElementById('confirm-title').textContent = 'Delete Recipe';
+      document.getElementById('confirm-message').textContent = `Are you sure you want to delete "${title}"? This cannot be undone.`;
+      document.getElementById('confirm-action').onclick = () => deleteRecipe(pendingDeleteSlug);
+      document.getElementById('confirm-overlay').classList.add('active');
+      // Close the three-dot menu
+      const dd = document.getElementById('recipe-menu-dropdown');
+      if (dd) dd.classList.remove('active');
+    }
+    function closeConfirm() {
+      document.getElementById('confirm-overlay').classList.remove('active');
+      pendingDeleteSlug = null;
+    }
+    async function deleteRecipe(slug) {
+      closeConfirm();
+      try {
+        const resp = await fetch(`/api/recipes?slug=${encodeURIComponent(slug)}`, { method: 'DELETE' });
+        if (!resp.ok) throw new Error('Delete failed');
+        recipes = recipes.filter(r => r.slug !== slug);
+        closeModalDirect();
+        render();
+        buildCuisineFilters();
+        showToast('Recipe deleted');
+      } catch (e) {
+        showToast('Failed to delete recipe');
+      }
+    }
+
+    async function regeneratePhoto(slug) {
+      const recipe = recipes.find(r => r.slug === slug);
+      if (!recipe) { showToast('Recipe not found'); return; }
+
+      const btn = document.getElementById('regen-photo-btn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
+
+      // Show spinner on the image area
+      const heroEl = document.querySelector('.modal-hero');
+      const imageEl = heroEl?.querySelector('.modal-image, .modal-image-placeholder, .modal-image-error');
+      if (imageEl) {
+        imageEl.outerHTML = `<div class="modal-image-loading"><div class="photo-spinner"></div>Generating photo...</div>`;
+      }
+
+      // Auto-generate a visual description from the recipe data
+      const topIngredients = (recipe.ingredients || [])
+        .filter(i => i.item)
+        .slice(0, 6)
+        .map(i => i.item.toLowerCase())
+        .join(', ');
+      const subjectDescription = `A beautifully plated ${recipe.title}. ${recipe.description || ''} Key visible ingredients: ${topIngredients}. Served fresh and ready to eat.`;
+
+      try {
+        const resp = await fetch('/api/photo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: recipe.title,
+            subjectDescription,
+            cuisine: recipe.cuisine || ''
+          })
+        });
+
+        if (!resp.ok) {
+          let errMsg = 'Photo generation failed';
+          try { const err = await resp.json(); errMsg = err.error || errMsg; } catch {}
+          throw new Error(errMsg);
+        }
+
+        const data = await resp.json();
+        if (data.url) {
+          recipe.photo = data.url;
+          // Replace spinner with the new image
+          const loadingEl = heroEl?.querySelector('.modal-image-loading');
+          if (loadingEl) {
+            loadingEl.outerHTML = `<img class="modal-image" src="${data.url}" alt="${recipe.title}">`;
+          }
+          render();
+          showToast('New photo generated!');
+        } else {
+          throw new Error('No photo URL returned');
+        }
+      } catch (e) {
+        console.error('Photo regen failed:', e);
+        // Replace spinner with error state
+        const loadingEl = heroEl?.querySelector('.modal-image-loading');
+        if (loadingEl) {
+          loadingEl.outerHTML = `<div class="modal-image-error">Image failed to be created<br><span style="font-size:0.75rem;color:var(--text-muted)">${e.message}</span></div>`;
+        }
+        showToast('Photo failed: ' + e.message);
+      } finally {
+        const btn2 = document.getElementById('regen-photo-btn');
+        if (btn2) { btn2.disabled = false; btn2.textContent = 'New Photo'; }
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // SETTINGS
+    // ═══════════════════════════════════════════
+    function toggleSettings() {
+      document.getElementById('settings-panel').classList.toggle('active');
+    }
+
+    let _settingsTimer = null;
+    function updateSettings() {
+      const title = document.getElementById('setting-title').value;
+      const subtitle = document.getElementById('setting-subtitle').value;
+
+      // Update UI immediately
+      document.getElementById('library-title').textContent = title || 'My Recipe Book';
+      document.getElementById('library-subtitle').textContent = subtitle || 'Collected, refined & cooked with love';
+
+      // Always persist to localStorage immediately
+      if (title) localStorage.setItem('libraryTitle', title);
+      else localStorage.removeItem('libraryTitle');
+      if (subtitle) localStorage.setItem('librarySubtitle', subtitle);
+      else localStorage.removeItem('librarySubtitle');
+
+      // Debounced API save (500ms after last keystroke)
+      clearTimeout(_settingsTimer);
+      _settingsTimer = setTimeout(() => {
+        fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, subtitle })
+        }).catch(() => { /* localStorage already saved above */ });
+      }, 500);
+    }
+
+    // ═══════════════════════════════════════════
+    // UTILITIES
+    // ═══════════════════════════════════════════
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('active');
+      setTimeout(() => t.classList.remove('active'), 2500);
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
+
+    // ═══════════════════════════════════════════
+    // CHAT INTERFACE
+    // ═══════════════════════════════════════════
+    function toggleChat() {
+      const panel = document.getElementById('chat-panel');
+      const fab = document.getElementById('chat-fab');
+      panel.classList.toggle('active');
+      fab.classList.toggle('hidden', panel.classList.contains('active'));
+      if (panel.classList.contains('active')) {
+        // Set initial height from visualViewport if available (mobile keyboard support)
+        if (window.visualViewport) {
+          panel.style.height = window.visualViewport.height + 'px';
+          panel.style.top = window.visualViewport.offsetTop + 'px';
+        }
+        document.getElementById('chat-input').focus();
+      } else {
+        // Reset inline styles when closing
+        panel.style.height = '';
+        panel.style.top = '';
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // CHAT IMAGE HANDLING
+    // ═══════════════════════════════════════════
+    let _chatImageData = null; // { base64, mediaType, dataUrl }
+
+    function handleChatImage(files) {
+      if (!files || !files[0]) return;
+      const file = files[0];
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        const base64 = dataUrl.split(',')[1];
+        const mediaType = file.type;
+        _chatImageData = { base64, mediaType, dataUrl };
+        document.getElementById('chat-img-thumb').src = dataUrl;
+        document.getElementById('chat-img-preview').style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+      // Reset file input so the same file can be re-selected
+      document.getElementById('chat-img-input').value = '';
+    }
+
+    function clearChatImage() {
+      _chatImageData = null;
+      document.getElementById('chat-img-preview').style.display = 'none';
+      document.getElementById('chat-img-thumb').src = '';
+    }
+
+    // Paste handler for images
+    document.addEventListener('DOMContentLoaded', () => {
+      const chatPanel = document.getElementById('chat-panel');
+      if (chatPanel) {
+        chatPanel.addEventListener('paste', (e) => {
+          const items = e.clipboardData?.items;
+          if (!items) return;
+          for (const item of items) {
+            if (item.type.startsWith('image/')) {
+              e.preventDefault();
+              handleChatImage([item.getAsFile()]);
+              return;
+            }
+          }
+        });
+      }
+    });
+
+    async function sendChat() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      const imageData = _chatImageData;
+      if (!text && !imageData) return;
+
+      input.value = '';
+      input.style.height = 'auto';
+      clearChatImage();
+
+      // Build user message content
+      let displayHtml = '';
+      let apiContent = [];
+
+      if (imageData) {
+        displayHtml += `<img src="${imageData.dataUrl}" alt="attached photo">`;
+        apiContent.push({
+          type: 'image',
+          source: { type: 'base64', media_type: imageData.mediaType, data: imageData.base64 }
+        });
+      }
+      if (text) {
+        displayHtml += (displayHtml ? '<br>' : '') + text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        apiContent.push({ type: 'text', text: text });
+      }
+      if (!text && imageData) {
+        apiContent.push({ type: 'text', text: 'What is this dish? Can you create a recipe to replicate it?' });
+      }
+
+      // Add user message to UI (with image if present)
+      const userMsgEl = appendChatMessage('user', '');
+      userMsgEl.innerHTML = displayHtml;
+
+      // For chat history, store text-only version
+      chatMessages.push({ role: 'user', content: apiContent.length === 1 && apiContent[0].type === 'text' ? text : apiContent });
+
+      // Disable send button
+      const sendBtn = document.getElementById('chat-send');
+      sendBtn.disabled = true;
+
+      // Add typing indicator
+      const typingEl = appendChatTyping();
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: chatMessages })
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            typingEl.remove();
+            showLoginOverlay();
+            sendBtn.disabled = false;
+            return;
+          }
+          const err = await response.json();
+          throw new Error(err.error || 'Chat request failed');
+        }
+
+        // Remove typing indicator
+        typingEl.remove();
+
+        // Process SSE stream
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let assistantText = '';
+        let msgEl = null;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop();
+
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              var eventType = line.slice(7).trim();
+            }
+            if (!line.startsWith('data: ')) continue;
+
+            let data;
+            try { data = JSON.parse(line.slice(6)); } catch { continue; }
+
+            if (eventType === 'text' && data.text) {
+              assistantText += data.text;
+              if (!msgEl) {
+                msgEl = appendChatMessage('assistant', '');
+              }
+              msgEl.innerHTML = renderChatMarkdown(assistantText);
+              scrollChatToBottom();
+            }
+
+            if (eventType === 'tool_start') {
+              const note = data.tool === 'save_recipe' ? 'Saving recipe to your book...'
+                        : data.tool === 'generate_photo' ? 'Generating a photo...'
+                        : 'Working...';
+              appendChatMessage('system', note);
+            }
+
+            if (eventType === 'recipe_saved') {
+              showToast('Recipe added to your book, chef!');
+              // Refresh recipe list
+              try {
+                const resp = await fetch('/api/recipes');
+                if (resp.ok) {
+                  recipes = await resp.json();
+                  recipes.forEach(r => { if (ratings[r.slug]) r.rating = ratings[r.slug]; });
+                  buildCuisineFilters();
+                  render();
+                }
+              } catch (e) {}
+            }
+
+            if (eventType === 'photo_generated' && data.url) {
+              // Update the recipe in our local state
+              const slug = data.slug;
+              const recipe = recipes.find(r => r.slug === slug);
+              if (recipe) {
+                recipe.photo = data.url;
+                render();
+              }
+            }
+
+            if (eventType === 'error') {
+              appendChatMessage('system', 'Something went wrong: ' + (data.error || 'Unknown error'));
+            }
+
+            if (eventType === 'done') {
+              // Stream complete
+            }
+          }
+        }
+
+        // Save assistant message to history
+        if (assistantText) {
+          chatMessages.push({ role: 'assistant', content: assistantText });
+        }
+
+        // Auto-save chat after each exchange
+        saveCurrentChat();
+
+      } catch (e) {
+        typingEl.remove();
+        appendChatMessage('system', e.message || 'Failed to connect. Is ANTHROPIC_API_KEY set?');
+        saveCurrentChat();
+      }
+
+      sendBtn.disabled = false;
+      document.getElementById('chat-input').focus();
+    }
+
+    function appendChatMessage(role, content) {
+      const container = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `chat-msg chat-msg-${role}`;
+
+      if (role === 'assistant') {
+        div.innerHTML = renderChatMarkdown(content);
+      } else {
+        div.textContent = content;
+      }
+
+      container.appendChild(div);
+      scrollChatToBottom();
+      return div;
+    }
+
+    function appendChatTyping() {
+      const container = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'chat-msg chat-msg-assistant';
+      div.innerHTML = '<div class="chat-typing"><span></span><span></span><span></span></div>';
+      container.appendChild(div);
+      scrollChatToBottom();
+      return div;
+    }
+
+    function scrollChatToBottom() {
+      const container = document.getElementById('chat-messages');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function renderChatMarkdown(text) {
+      if (!text) return '';
+      // Basic markdown to HTML conversion
+      let html = text
+        // Escape HTML
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        // Headers
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        // Bold and italic
+        .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        // Inline code
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        // Horizontal rule
+        .replace(/^---$/gm, '<hr>')
+        // Line breaks
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+
+      // Wrap in paragraphs
+      html = '<p>' + html + '</p>';
+      // Clean up empty paragraphs
+      html = html.replace(/<p><\/p>/g, '').replace(/<p>(<h[1-3]>)/g, '$1').replace(/(<\/h[1-3]>)<\/p>/g, '$1');
+
+      return html;
+    }
+
+    // ═══════════════════════════════════════════
+    // CHAT HISTORY
+    // ═══════════════════════════════════════════
+    function generateChatId() {
+      return 'chat_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    }
+
+    function chatTitleFromMessage(content) {
+      // Handle array content (image + text messages)
+      const text = typeof content === 'string' ? content
+        : Array.isArray(content) ? (content.find(c => c.type === 'text')?.text || 'Photo') : 'Chat';
+      const clean = text.replace(/\n/g, ' ').trim();
+      return clean.length > 40 ? clean.substring(0, 40) + '...' : clean;
+    }
+
+    // Strip base64 image data from chat history before storing in KV
+    // (keeps messages small enough for Redis, images were already processed)
+    function stripImagesForStorage(chats) {
+      return chats.map(chat => ({
+        ...chat,
+        messages: chat.messages.map(m => {
+          if (Array.isArray(m.content)) {
+            return { ...m, content: m.content.filter(c => c.type !== 'image') };
+          }
+          return m;
+        }),
+        displayMessages: (chat.displayMessages || []).map(dm => ({
+          ...dm,
+          html: dm.html.replace(/src="data:image\/[^"]+"/g, 'src=""').replace(/<img [^>]*src=""[^>]*>/g, '<em>[Photo]</em>')
+        }))
+      }));
+    }
+
+    function saveChatHistory() {
+      localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+    }
+
+    let _chatSyncTimer = null;
+    function syncChatsToAPI() {
+      clearTimeout(_chatSyncTimer);
+      _chatSyncTimer = setTimeout(() => {
+        const stripped = stripImagesForStorage(chatHistory);
+        fetch('/api/chats', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chats: stripped })
+        }).catch(() => { /* localStorage is primary fallback */ });
+      }, 1000);
+    }
+
+    function saveCurrentChat() {
+      if (!currentChatId || chatMessages.length === 0) return;
+
+      const container = document.getElementById('chat-messages');
+      const displayMessages = [];
+      container.querySelectorAll('.chat-msg').forEach(el => {
+        if (el.classList.contains('chat-msg-user')) {
+          displayMessages.push({ role: 'user', html: el.innerHTML });
+        } else if (el.classList.contains('chat-msg-assistant')) {
+          displayMessages.push({ role: 'assistant', html: el.innerHTML });
+        } else if (el.classList.contains('chat-msg-system')) {
+          displayMessages.push({ role: 'system', html: el.innerHTML });
+        }
+      });
+
+      const existing = chatHistory.find(c => c.id === currentChatId);
+      if (existing) {
+        existing.messages = [...chatMessages];
+        existing.displayMessages = displayMessages;
+        if (existing.title === 'New chat' && chatMessages.length > 0) {
+          const firstUser = chatMessages.find(m => m.role === 'user');
+          if (firstUser) existing.title = chatTitleFromMessage(firstUser.content);
+        }
+      } else {
+        const firstUser = chatMessages.find(m => m.role === 'user');
+        const title = firstUser ? chatTitleFromMessage(firstUser.content) : 'New chat';
+        chatHistory.unshift({
+          id: currentChatId,
+          title,
+          messages: [...chatMessages],
+          displayMessages,
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      if (chatHistory.length > 20) chatHistory = chatHistory.slice(0, 20);
+      saveChatHistory();
+      syncChatsToAPI();
+      renderChatHistoryDropdown();
+    }
+
+    function renderChatHistoryDropdown() {
+      const select = document.getElementById('chat-history-select');
+      if (!select) return;
+      select.innerHTML = '';
+
+      const currentOpt = document.createElement('option');
+      currentOpt.value = currentChatId || 'current';
+      const currentChat = chatHistory.find(c => c.id === currentChatId);
+      currentOpt.textContent = currentChat ? currentChat.title : 'New chat';
+      currentOpt.selected = true;
+      select.appendChild(currentOpt);
+
+      const others = chatHistory.filter(c => c.id !== currentChatId);
+      if (others.length > 0) {
+        const sep = document.createElement('option');
+        sep.disabled = true;
+        sep.textContent = '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500';
+        select.appendChild(sep);
+
+        others.forEach(chat => {
+          const opt = document.createElement('option');
+          opt.value = chat.id;
+          opt.textContent = chat.title;
+          select.appendChild(opt);
+        });
+      }
+    }
+
+    function loadChat(chatId) {
+      if (chatId === currentChatId || chatId === 'current') return;
+
+      saveCurrentChat();
+
+      const chat = chatHistory.find(c => c.id === chatId);
+      if (!chat) return;
+
+      currentChatId = chatId;
+      chatMessages = [...chat.messages];
+
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '';
+
+      if (chat.displayMessages && chat.displayMessages.length > 0) {
+        chat.displayMessages.forEach(dm => {
+          const div = document.createElement('div');
+          div.className = 'chat-msg chat-msg-' + dm.role;
+          div.innerHTML = dm.html;
+          container.appendChild(div);
+        });
+      } else {
+        chatMessages.forEach(msg => {
+          const div = document.createElement('div');
+          div.className = 'chat-msg chat-msg-' + msg.role;
+          if (msg.role === 'assistant') {
+            div.innerHTML = renderChatMarkdown(msg.content);
+          } else {
+            div.textContent = msg.content;
+          }
+          container.appendChild(div);
+        });
+      }
+
+      scrollChatToBottom();
+      renderChatHistoryDropdown();
+    }
+
+    function newChat() {
+      saveCurrentChat();
+      currentChatId = generateChatId();
+      chatMessages = [];
+      const container = document.getElementById('chat-messages');
+      container.innerHTML = '<div class="chat-msg chat-msg-assistant">Yes, chef. What are we cooking today?</div>';
+      document.getElementById('chat-input').focus();
+      renderChatHistoryDropdown();
+    }
+
+    async function initChatHistory() {
+      // Load from localStorage first (instant)
+      const localChats = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+      chatHistory = localChats;
+      currentChatId = generateChatId();
+      renderChatHistoryDropdown();
+
+      // Then fetch from API and merge (KV has cross-device chats)
+      try {
+        const resp = await fetch('/api/chats');
+        if (resp.ok) {
+          const apiChats = await resp.json();
+          if (apiChats.length > 0) {
+            // Merge: combine both sources by ID, newer wins
+            const byId = {};
+            localChats.forEach(c => byId[c.id] = c);
+            apiChats.forEach(c => {
+              if (!byId[c.id]) byId[c.id] = c; // API chat not in local — add it
+            });
+            chatHistory = Object.values(byId)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              .slice(0, 20);
+            saveChatHistory(); // Update localStorage with merged data
+            renderChatHistoryDropdown();
+          }
+        }
+      } catch (e) { /* API unavailable — localStorage is fine */ }
+    }
+
+    // ═══════════════════════════════════════════
+    // AUTH — LOGIN OVERLAY
+    // ═══════════════════════════════════════════
+    async function checkAuth() {
+      try {
+        const resp = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'check' })
+        });
+        if (!resp.ok) return true;
+        const data = await resp.json();
+        if (data.passwordSet && !data.authenticated) {
+          showLoginOverlay();
+          return false;
+        }
+        return true;
+      } catch (e) {
+        return true; // Network error or local dev — allow access
+      }
+    }
+
+    function showLoginOverlay() {
+      document.getElementById('login-overlay').classList.add('active');
+      setTimeout(() => document.getElementById('login-password').focus(), 100);
+    }
+
+    function hideLoginOverlay() {
+      document.getElementById('login-overlay').classList.remove('active');
+      document.getElementById('login-error').style.display = 'none';
+    }
+
+    async function attemptLogin() {
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+      if (!password) {
+        errorEl.textContent = 'Please enter the password.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      try {
+        const resp = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'login', password })
+        });
+        if (resp.ok) {
+          hideLoginOverlay();
+          init();
+        } else {
+          const data = await resp.json();
+          errorEl.textContent = data.error || 'Wrong password.';
+          errorEl.style.display = 'block';
+          document.getElementById('login-password').value = '';
+          document.getElementById('login-password').focus();
+        }
+      } catch (e) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    function savePassword() {
+      const password = document.getElementById('setting-password').value;
+      fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'set-password', password: password || null })
+      }).then(resp => {
+        if (resp.ok && password) showToast('Password protection enabled');
+        else if (resp.ok) showToast('Password removed');
+      }).catch(() => {});
+    }
+
+    // Auto-resize chat textarea
+    document.addEventListener('DOMContentLoaded', () => {
+      const textarea = document.getElementById('chat-input');
+      if (textarea) {
+        textarea.addEventListener('input', () => {
+          textarea.style.height = 'auto';
+          textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        });
+      }
+
+      // Mobile keyboard: resize chat panel to visible viewport
+      if (window.visualViewport) {
+        const chatPanel = document.getElementById('chat-panel');
+        const onViewportResize = () => {
+          if (chatPanel && chatPanel.classList.contains('active')) {
+            chatPanel.style.height = window.visualViewport.height + 'px';
+            chatPanel.style.top = window.visualViewport.offsetTop + 'px';
+            scrollChatToBottom();
+          }
+        };
+        window.visualViewport.addEventListener('resize', onViewportResize);
+        window.visualViewport.addEventListener('scroll', onViewportResize);
+      }
+    });
+
+    // ═══════════════════════════════════════════
+    // BOOT
+    // ═══════════════════════════════════════════
+    init();
+  </script>
+</body>
+</html>
