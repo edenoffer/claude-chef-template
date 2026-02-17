@@ -14,22 +14,19 @@ No coding knowledge required. Just talk to it like you'd talk to a friend in the
 
 ## Get Your Own Copy
 
-> ⚠️ **This repo contains the owner's personal recipes.** To start fresh with your own empty book, follow the steps below — don't clone this repo directly.
-
 ### Option A — One-Click Deploy (Easiest)
 
-Click the button to fork the template and deploy to Vercel in one step:
+Click the button to fork and deploy to Vercel in one step:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/edenoffer/claude-chef&project-name=my-recipe-book&repository-name=my-recipe-book)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/edenoffer/claude-chef-template&project-name=my-recipe-book&repository-name=my-recipe-book)
 
-After deploying, add your API keys in Vercel Settings → Environment Variables (see [Step 3](#step-3-add-api-keys) below).
+After deploying, add your API keys and storage (see [Step 3](#step-3-add-api-keys) and [Step 4](#step-4-add-storage) below).
 
 ### Option B — Fork & Customize
 
 1. Click **Fork** in the top-right of this repo on GitHub
-2. In your fork, go to `recipes/data/` and delete all `.json` files (those are the owner's personal recipes)
-3. Also delete everything in `recipes/photos/` except `.gitkeep`
-4. Follow the [Full Deploy](#publishing-to-vercel-make-it-live) instructions below
+2. Clone your fork locally
+3. Follow the [Full Deploy](#publishing-to-vercel-make-it-live) instructions below
 
 ---
 
@@ -82,8 +79,8 @@ npm install -g @anthropic-ai/claude-code
 Fork this repo on GitHub first, then:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-chef.git
-cd claude-chef
+git clone https://github.com/YOUR_USERNAME/my-recipe-book.git
+cd my-recipe-book
 ```
 
 ### 4. Add Your API Keys
