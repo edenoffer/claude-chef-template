@@ -1,6 +1,6 @@
 import { kv } from './_lib/kv.js';
 import { put } from '@vercel/blob';
-import { SYSTEM_PROMPT, TOOLS } from './_lib/system-prompt.js';
+import { buildSystemPrompt, TOOLS } from './_lib/system-prompt.js';
 import { getPhotoStyle, CUISINE_PROPS, slugify } from './_lib/photo-style.js';
 import { verifyToken, getSessionToken } from './_lib/session.js';
 
@@ -40,8 +40,17 @@ export default async function handler(req, res) {
     'Connection': 'keep-alive',
   });
 
+  // Load custom chef list from settings (if set)
+  let systemPrompt;
   try {
-    await streamConversation(apiKey, messages, res);
+    const settings = await kv.get('settings') || {};
+    systemPrompt = buildSystemPrompt(settings.chefs || null);
+  } catch (e) {
+    systemPrompt = buildSystemPrompt(null);
+  }
+
+  try {
+    await streamConversation(apiKey, messages, systemPrompt, res);
   } catch (e) {
     sendSSE(res, 'error', { error: e.message });
   }
@@ -50,9 +59,9 @@ export default async function handler(req, res) {
   res.end();
 }
 
-async function streamConversation(apiKey, messages, res) {
+async function streamConversation(apiKey, messages, systemPrompt, res) {
   // First Claude call
-  const response = await callClaude(apiKey, messages);
+  const response = await callClaude(apiKey, messages, systemPrompt);
   const { assistantContent, toolUses } = await processStream(response, res);
 
   if (toolUses.length === 0) return;
@@ -84,7 +93,7 @@ async function streamConversation(apiKey, messages, res) {
     { role: 'user', content: toolResults },
   ];
 
-  const continuation = await callClaude(apiKey, continuationMessages);
+  const continuation = await callClaude(apiKey, continuationMessages, systemPrompt);
   const { toolUses: moreTools } = await processStream(continuation, res);
 
   // Handle a second round of tool calls (e.g., save_recipe then generate_photo)
@@ -114,12 +123,12 @@ async function streamConversation(apiKey, messages, res) {
       { role: 'user', content: moreResults },
     ];
 
-    const finalResp = await callClaude(apiKey, finalMessages);
+    const finalResp = await callClaude(apiKey, finalMessages, systemPrompt);
     await processStream(finalResp, res);
   }
 }
 
-async function callClaude(apiKey, messages) {
+async function callClaude(apiKey, messages, systemPrompt) {
   return fetch(ANTHROPIC_API, {
     method: 'POST',
     headers: {
@@ -130,7 +139,7 @@ async function callClaude(apiKey, messages) {
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 4096,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       messages,
       tools: TOOLS,
       stream: true,

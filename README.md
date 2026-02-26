@@ -14,19 +14,20 @@ No coding knowledge required. Just talk to it like you'd talk to a friend in the
 
 ## Get Your Own Copy
 
+> This is a clean template — no personal recipes included. Fork or deploy it to start your own empty recipe book.
+
 ### Option A — One-Click Deploy (Easiest)
 
-Click the button to fork and deploy to Vercel in one step:
+Click the button to fork the template and deploy to Vercel in one step:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/edenoffer/claude-chef-template&project-name=my-recipe-book&repository-name=my-recipe-book)
 
-After deploying, add your API keys and storage (see [Step 3](#step-3-add-api-keys) and [Step 4](#step-4-add-storage) below).
+After deploying, add your API keys in Vercel Settings → Environment Variables (see [Step 3](#step-3-add-api-keys) below).
 
 ### Option B — Fork & Customize
 
-1. Click **Fork** in the top-right of this repo on GitHub
-2. Clone your fork locally
-3. Follow the [Full Deploy](#publishing-to-vercel-make-it-live) instructions below
+1. Click **Fork** or **Use this template** in the top-right of this repo on GitHub
+2. Follow the [Full Deploy](#publishing-to-vercel-make-it-live) instructions below
 
 ---
 
@@ -79,8 +80,8 @@ npm install -g @anthropic-ai/claude-code
 Fork this repo on GitHub first, then:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/my-recipe-book.git
-cd my-recipe-book
+git clone https://github.com/YOUR_USERNAME/claude-chef.git
+cd claude-chef
 ```
 
 ### 4. Add Your API Keys
@@ -184,6 +185,10 @@ In your Vercel project dashboard → **Settings** → **Environment Variables**,
 | `ANTHROPIC_API_KEY` | `sk-ant-...` | [console.anthropic.com](https://console.anthropic.com) |
 | `GEMINI_API_KEY` | `AIza...` | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | `SESSION_SECRET` | any random string | make one up, e.g. `my-secret-book-2026` |
+| `RESEND_API_KEY` | `re_...` | [resend.com](https://resend.com) — free, for password reset emails |
+| `SITE_URL` | `https://your-app.vercel.app` | your deployed URL, used in reset links |
+
+> `RESEND_API_KEY` and `SITE_URL` are only needed if you want to use the **Forgot Password** feature. Everything else works without them.
 
 ### Step 4: Add Storage
 
@@ -199,6 +204,7 @@ Go to **Deployments** tab → click three dots on latest → **Redeploy**
 Your recipe book is now fully live with:
 - Chat with your sous chef from any device
 - Password protection (set in Settings panel)
+- Password reset via email (requires `RESEND_API_KEY`)
 - Ratings that sync across all your devices
 - AI-generated food photos from the web
 
@@ -218,7 +224,13 @@ Click the chef button (bottom-right) to open the chat panel. Your sous chef has 
 - **Paste a YouTube URL** or recipe blog link and the sous chef will extract and adapt the recipe
 
 ### Password Protection
-Set a password in the Settings panel (gear icon). Anyone accessing your recipe book URL will need to enter the password first.
+Set a password in the Settings panel (gear icon). Anyone accessing your recipe book URL will need to enter the password first. Sessions expire when the browser closes — re-authentication is required each new browser session.
+
+### Forgot Password / Reset
+Set a **Recovery Email** in Settings alongside your password. If you ever get locked out, click "Forgot password?" on the login screen — a reset link will be sent to that email (requires `RESEND_API_KEY` in Vercel env vars).
+
+### Customizable Chef List
+In Settings, manage which chefs the sous chef references when building recipes. Remove any of the defaults or add your own favourites. Names are saved and applied to every new recipe conversation.
 
 ### Cross-Device Chat History
 All your sous chef conversations are saved and accessible across devices.
@@ -231,14 +243,15 @@ Change your recipe book's title and subtitle in the Settings panel.
 
 ---
 
-## Privacy & Data
+## Privacy & Security
 
 Your recipe book is **completely separate from anyone else's**. When you deploy:
 
 - **Your Vercel project** = your own isolated app
 - **Your KV database** = your recipes only, no one can access them
 - **Your Blob storage** = your food photos only
-- **Password protection** = optional extra lock on the whole site
+- **Password protection** = optional lock on the whole site
+- **Session security** = passwords are hashed with PBKDF2-SHA512 (salted); sessions expire when the browser closes
 
 The source code is shared (that's the whole point — it's a template), but your data never is.
 
@@ -265,10 +278,13 @@ Without Gemini: everything works except food photos. Without Anthropic: everythi
 Yes! Use `/import` and paste the recipe text, or tell `/cook` the recipe and it will format and save it.
 
 **What chefs does it reference?**
-Kenji Lopez-Alt, Marco Pierre White, Matty Matheson, Ken Forkish, Julia Child, Fuchsia Dunlop, Nik Sharma, and Chad Robertson — depending on the dish and cuisine.
+By default: Kenji Lopez-Alt, Marco Pierre White, Matty Matheson, Ken Forkish, Julia Child, Fuchsia Dunlop, Nik Sharma, and Chad Robertson. You can add or remove chefs in the Settings panel — your list is saved and used for all future recipes.
 
 **How much does the web chat cost?**
 It uses your own API credits. A typical recipe conversation costs about $0.05–0.15 with Claude Sonnet.
+
+**Can I reset my password if I forget it?**
+Yes — set a Recovery Email in Settings alongside your password. Then use "Forgot password?" on the login screen. Requires `RESEND_API_KEY` in your Vercel env vars (free at resend.com).
 
 ---
 
@@ -278,13 +294,16 @@ It uses your own API credits. A typical recipe conversation costs about $0.05–
 claude-chef/
 ├── api/                        ← Vercel serverless functions
 │   ├── _lib/                   ← Shared modules
+│   │   ├── session.js          ← Auth tokens + PBKDF2 password hashing
+│   │   ├── system-prompt.js    ← Sous chef prompt (dynamic chef list)
+│   │   ├── photo-style.js      ← Food photography styles
+│   │   └── kv.js               ← KV client wrapper
 │   ├── chat.js                 ← Claude API streaming proxy
 │   ├── recipes.js              ← Recipe CRUD
 │   ├── ratings.js              ← Rating storage
-│   ├── settings.js             ← Library settings
-│   ├── auth.js                 ← Password/login
+│   ├── settings.js             ← Library settings + chef list
+│   ├── auth.js                 ← Password/login/reset
 │   └── photo.js                ← Gemini photo generation
-├── middleware.js                ← Password protection
 ├── recipes/
 │   ├── recipe-book.html        ← Your recipe book (with chat!)
 │   ├── data/                   ← Individual recipe files (yours — not shared)

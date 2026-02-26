@@ -1553,6 +1553,114 @@
     }
 
     /* ═══════════════════════════════════════════
+       SETTINGS — CHEF CHIPS & HINTS
+       ═══════════════════════════════════════════ */
+    .settings-hint {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin: 0.25rem 0 0.6rem;
+      line-height: 1.5;
+    }
+    .chef-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.6rem;
+    }
+    .chef-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.2rem 0.6rem 0.2rem 0.75rem;
+      font-size: 0.72rem;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+    .chef-chip button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .chef-chip button:hover { color: var(--accent); }
+    .chef-add-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .chef-add-row input { flex: 1; }
+    .chef-add-row button, .chef-save-btn {
+      padding: 0.35rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .chef-add-row button:hover, .chef-save-btn:hover { background: #a82024; }
+    .chef-save-btn { width: 100%; margin-top: 0.25rem; }
+
+    /* ═══════════════════════════════════════════
+       LOGIN — FORGOT PASSWORD + RESET FORM
+       ═══════════════════════════════════════════ */
+    .login-forgot {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    .login-forgot a {
+      color: var(--text-secondary);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .login-forgot a:hover { color: var(--accent); }
+    .login-alt-form {
+      display: none;
+    }
+    .login-alt-form input {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      background: white;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      box-sizing: border-box;
+    }
+    .login-back-link {
+      display: block;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    .login-back-link:hover { color: var(--accent); }
+    .login-info {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════════
        PRINT STYLES
        ═══════════════════════════════════════════ */
     @media print {
@@ -1645,6 +1753,25 @@
         <button onclick="savePassword()">Set</button>
       </div>
     </div>
+    <div class="settings-field">
+      <label>Recovery Email</label>
+      <p class="settings-hint">Required for password reset. Must match the email on your account. Save alongside the password above.</p>
+      <div class="password-row">
+        <input type="email" id="setting-email" placeholder="your@email.com">
+        <button onclick="savePassword()">Save</button>
+      </div>
+    </div>
+    <div class="settings-field">
+      <label>Reference Chefs</label>
+      <p class="settings-hint">These chefs inspire your recipes. The sous chef references their techniques when building new dishes.</p>
+      <div class="chef-chips" id="chef-chips"></div>
+      <div class="chef-add-row">
+        <input type="text" id="chef-add-input" placeholder="Add a chef name (English only)"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();addChef()}">
+        <button onclick="addChef()">Add</button>
+      </div>
+      <button class="chef-save-btn" onclick="saveChefs()">Save Chef List</button>
+    </div>
   </div>
 
   <!-- CHAT FAB -->
@@ -1681,12 +1808,41 @@
   <!-- LOGIN OVERLAY -->
   <div class="login-overlay" id="login-overlay">
     <div class="login-card">
-      <h2>Welcome, Chef</h2>
-      <p>This recipe book is password-protected.</p>
-      <input type="password" id="login-password" placeholder="Enter password"
-             onkeydown="if(event.key==='Enter') attemptLogin()">
-      <button onclick="attemptLogin()">Enter Kitchen</button>
-      <div class="login-error" id="login-error"></div>
+
+      <!-- Normal login form -->
+      <div id="login-main-form">
+        <h2>Welcome, Chef</h2>
+        <p>This recipe book is password-protected.</p>
+        <input type="password" id="login-password" placeholder="Enter password"
+               onkeydown="if(event.key==='Enter') attemptLogin()">
+        <button onclick="attemptLogin()">Enter Kitchen</button>
+        <div class="login-error" id="login-error"></div>
+        <div class="login-forgot">
+          <a onclick="showForgotForm()">Forgot password?</a>
+        </div>
+      </div>
+
+      <!-- Forgot password form -->
+      <div id="login-forgot-form" class="login-alt-form">
+        <h2>Reset Password</h2>
+        <p class="login-info">Enter the recovery email you saved in Settings. If it matches the account, we'll send you a reset link.</p>
+        <input type="email" id="forgot-email" placeholder="your@email.com"
+               onkeydown="if(event.key==='Enter') requestReset()">
+        <button onclick="requestReset()">Send Reset Link</button>
+        <div class="login-error" id="forgot-error"></div>
+        <a class="login-back-link" onclick="showLoginForm()">← Back to login</a>
+      </div>
+
+      <!-- Reset password form (shown when ?reset=TOKEN in URL) -->
+      <div id="login-reset-form" class="login-alt-form">
+        <h2>Set New Password</h2>
+        <p class="login-info">Enter your new password below.</p>
+        <input type="password" id="reset-new-password" placeholder="New password"
+               onkeydown="if(event.key==='Enter') submitReset()">
+        <button onclick="submitReset()">Set Password</button>
+        <div class="login-error" id="reset-error"></div>
+      </div>
+
     </div>
   </div>
 
@@ -1730,9 +1886,16 @@
     // INIT — async, fetches from API with localStorage fallback
     // ═══════════════════════════════════════════
     async function init() {
+      // Handle ?reset=TOKEN before checking normal auth
+      const handlingReset = await checkResetToken();
+      if (handlingReset) return;
+
       // Check if password protection is active
       const authed = await checkAuth();
       if (!authed) return; // Login overlay shown; init() re-called after login
+
+      // Initialize chef chips with defaults (will be overridden by API settings)
+      renderChefChips();
 
       // Initialize chat history
       initChatHistory();
@@ -1773,6 +1936,11 @@
             document.getElementById('library-subtitle').textContent = settings.subtitle;
             document.getElementById('setting-subtitle').value = settings.subtitle;
             localStorage.setItem('librarySubtitle', settings.subtitle);
+          }
+          // Load chef list
+          if (settings.chefs) {
+            currentChefs = settings.chefs;
+            renderChefChips();
           }
         }
       } catch (e) { /* localStorage already applied above */ }
@@ -2023,6 +2191,8 @@
       r.ingredients = r.ingredients || [];
       r.instructions = r.instructions || [];
 
+      const isIncomplete = r.ingredients.length === 0 && r.instructions.length === 0;
+
       const mc = document.getElementById('modal-content');
 
       // Build ingredients table
@@ -2089,7 +2259,7 @@
           <!-- Ingredients -->
           <div class="recipe-section">
             <h3 class="recipe-section-title">Ingredients</h3>
-            <table class="ingredients-table">
+            ${isIncomplete ? '' : `<table class="ingredients-table">
               <thead>
                 <tr>
                   <td class="ing-item" style="font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);padding-bottom:0.5rem;">Ingredient</td>
@@ -2098,16 +2268,19 @@
                 </tr>
               </thead>
               <tbody>${ingRows}</tbody>
-            </table>
+            </table>`}
+            ${isIncomplete ? `<div style="background:#fdf3cd;border:1px solid #f0d060;border-radius:8px;padding:1rem 1.25rem;color:#7a5c00;font-size:0.9rem;line-height:1.6;">
+              <strong>Recipe data is incomplete.</strong> This recipe was saved without ingredients or instructions — likely a partial save. Ask the sous chef to re-create it by opening the chat and saying <em>"Recreate ${r.title.replace(/"/g, '&quot;')}"</em>.
+            </div>` : ''}
           </div>
 
           <!-- Instructions -->
-          <div class="recipe-section">
+          ${!isIncomplete ? `<div class="recipe-section">
             <h3 class="recipe-section-title">Instructions</h3>
             <ol class="instructions-list">
               ${r.instructions.map(s => `<li>${s}</li>`).join('')}
             </ol>
-          </div>
+          </div>` : ''}
 
           <!-- Chef's Notes -->
           ${r.chefsNotes && r.chefsNotes.length > 0 ? `
@@ -2812,6 +2985,7 @@
     }
 
     function showLoginOverlay() {
+      showLoginForm(); // ensure main form is shown, not forgot/reset
       document.getElementById('login-overlay').classList.add('active');
       setTimeout(() => document.getElementById('login-password').focus(), 100);
     }
@@ -2853,14 +3027,189 @@
 
     function savePassword() {
       const password = document.getElementById('setting-password').value;
+      const email = document.getElementById('setting-email').value.trim() || null;
       fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'set-password', password: password || null })
+        body: JSON.stringify({ action: 'set-password', password: password || null, email })
       }).then(resp => {
-        if (resp.ok && password) showToast('Password protection enabled');
+        if (resp.ok && password) showToast('Password' + (email ? ' & recovery email' : '') + ' saved');
         else if (resp.ok) showToast('Password removed');
       }).catch(() => {});
+    }
+
+    // ═══════════════════════════════════════════
+    // FORGOT / RESET PASSWORD
+    // ═══════════════════════════════════════════
+    function showLoginForm() {
+      document.getElementById('login-main-form').style.display = '';
+      document.getElementById('login-forgot-form').style.display = 'none';
+      document.getElementById('login-reset-form').style.display = 'none';
+      document.getElementById('login-error').style.display = 'none';
+    }
+
+    function showForgotForm() {
+      document.getElementById('login-main-form').style.display = 'none';
+      document.getElementById('login-forgot-form').style.display = '';
+      document.getElementById('forgot-error').style.display = 'none';
+      setTimeout(() => document.getElementById('forgot-email').focus(), 100);
+    }
+
+    async function requestReset() {
+      const email = document.getElementById('forgot-email').value.trim();
+      const errorEl = document.getElementById('forgot-error');
+      if (!email) {
+        errorEl.textContent = 'Please enter your email.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      try {
+        const resp = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'request-reset', email })
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+          errorEl.textContent = data.error || 'Something went wrong.';
+          errorEl.style.display = 'block';
+        } else {
+          errorEl.style.display = 'none';
+          document.getElementById('login-forgot-form').innerHTML =
+            '<h2>Check Your Email</h2><p class="login-info">If your email matches the account, a reset link has been sent. Check your inbox (and spam folder).</p>';
+        }
+      } catch (e) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    async function submitReset() {
+      const resetToken = new URLSearchParams(window.location.search).get('reset');
+      const newPassword = document.getElementById('reset-new-password').value;
+      const errorEl = document.getElementById('reset-error');
+      if (!newPassword || newPassword.length < 6) {
+        errorEl.textContent = 'Password must be at least 6 characters.';
+        errorEl.style.display = 'block';
+        return;
+      }
+      try {
+        const resp = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'reset-password', token: resetToken, newPassword })
+        });
+        const data = await resp.json();
+        if (resp.ok) {
+          // Remove ?reset=... from URL cleanly
+          window.history.replaceState({}, document.title, window.location.pathname);
+          hideLoginOverlay();
+          init();
+          showToast('Password updated. Welcome back, chef!');
+        } else {
+          errorEl.textContent = data.error || 'Reset failed.';
+          errorEl.style.display = 'block';
+        }
+      } catch (e) {
+        errorEl.textContent = 'Connection error. Please try again.';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    // Check for ?reset=TOKEN on page load — handled in init via checkAuth
+    async function checkResetToken() {
+      const resetToken = new URLSearchParams(window.location.search).get('reset');
+      if (!resetToken) return false;
+      try {
+        const resp = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'verify-reset', token: resetToken })
+        });
+        if (resp.ok) {
+          // Show reset form in login overlay
+          document.getElementById('login-overlay').classList.add('active');
+          document.getElementById('login-main-form').style.display = 'none';
+          document.getElementById('login-forgot-form').style.display = 'none';
+          document.getElementById('login-reset-form').style.display = '';
+          setTimeout(() => document.getElementById('reset-new-password').focus(), 100);
+          return true; // Don't continue init until reset is done
+        }
+      } catch (e) { /* ignore */ }
+      return false;
+    }
+
+    // ═══════════════════════════════════════════
+    // CHEF LIST MANAGEMENT
+    // ═══════════════════════════════════════════
+    const DEFAULT_CHEFS = [
+      'Kenji Lopez-Alt',
+      'Marco Pierre White',
+      'Matty Matheson',
+      'Ken Forkish',
+      'Julia Child',
+      'Fuchsia Dunlop',
+      'Nik Sharma',
+      'Chad Robertson',
+    ];
+
+    let currentChefs = [...DEFAULT_CHEFS];
+
+    function isValidChefName(name) {
+      // Allow Latin letters (basic + extended), spaces, hyphens, apostrophes, periods
+      // Reject non-Latin scripts (CJK, Arabic, Cyrillic, etc.)
+      return /^[a-zA-ZÀ-ÖØ-öø-ÿ\s\-'.]+$/.test(name.trim()) && name.trim().length >= 2;
+    }
+
+    function renderChefChips() {
+      const container = document.getElementById('chef-chips');
+      if (!container) return;
+      container.innerHTML = currentChefs.map((chef, i) => `
+        <span class="chef-chip">
+          ${chef}
+          <button onclick="removeChef(${i})" title="Remove">&times;</button>
+        </span>
+      `).join('');
+    }
+
+    function removeChef(index) {
+      currentChefs.splice(index, 1);
+      renderChefChips();
+    }
+
+    function addChef() {
+      const input = document.getElementById('chef-add-input');
+      const name = input.value.trim();
+      if (!name) return;
+      if (!isValidChefName(name)) {
+        showToast('Please use English (Latin) characters only for chef names.');
+        return;
+      }
+      if (currentChefs.length >= 20) {
+        showToast('Maximum 20 chefs allowed.');
+        return;
+      }
+      if (currentChefs.some(c => c.toLowerCase() === name.toLowerCase())) {
+        showToast('That chef is already in the list.');
+        return;
+      }
+      currentChefs.push(name);
+      renderChefChips();
+      input.value = '';
+    }
+
+    async function saveChefs() {
+      try {
+        const resp = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chefs: currentChefs })
+        });
+        if (resp.ok) showToast('Chef list saved — sous chef will use these next time.');
+        else showToast('Could not save chef list.');
+      } catch (e) {
+        showToast('Connection error.');
+      }
     }
 
     // Auto-resize chat textarea
