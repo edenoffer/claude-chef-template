@@ -238,6 +238,12 @@ All your sous chef conversations are saved and accessible across devices.
 ### Cross-Device Ratings
 Rate recipes with stars. Your ratings persist across all devices.
 
+### Recipe Scaling
+Open any recipe and use the **− / +** buttons next to "Serves" to scale up or down. All ingredient quantities — cups, grams, and fractions — update instantly.
+
+### Shopping List
+Click **🛒 Shopping List** in the toolbar to enter selection mode. Check off the recipes you're planning to cook, then click **Generate Shopping List**. You get a clean, flat ingredient list ready to copy and paste into WhatsApp, Notes, or any chat app.
+
 ### Customization
 Change your recipe book's title and subtitle in the Settings panel.
 

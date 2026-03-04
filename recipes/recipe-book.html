@@ -1661,6 +1661,203 @@
     }
 
     /* ═══════════════════════════════════════════
+       SERVES ADJUSTER (Recipe Scaling)
+       ═══════════════════════════════════════════ */
+    .serves-adjuster {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .serves-btn {
+      width: 1.3rem;
+      height: 1.3rem;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.85rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      padding: 0;
+      font-family: var(--font-sans);
+    }
+    .serves-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    #modal-serves {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 500;
+      min-width: 1.5rem;
+      text-align: center;
+      color: var(--text-primary);
+    }
+
+    /* ═══════════════════════════════════════════
+       SHOPPING LIST — SELECTION MODE
+       ═══════════════════════════════════════════ */
+    .cart-btn {
+      padding: 0.4rem 0.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .cart-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cart-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .selection-bar {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0;
+      border-top: 1px solid var(--border-light);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+    .selection-bar.active { display: flex; }
+
+    .selection-generate-btn {
+      padding: 0.35rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .selection-generate-btn:hover { background: #a01f25; border-color: #a01f25; }
+    .selection-generate-btn:disabled {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: var(--border);
+      cursor: default;
+    }
+    .selection-cancel-btn {
+      padding: 0.35rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .selection-cancel-btn:hover { border-color: var(--text-muted); }
+
+    .card.selectable { cursor: pointer; }
+    .card.selected { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .card-checkbox {
+      position: absolute;
+      top: 0.6rem;
+      left: 0.6rem;
+      width: 1.3rem;
+      height: 1.3rem;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: transparent;
+      z-index: 2;
+      transition: all 0.15s;
+    }
+    .card-checkbox.checked {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ═══════════════════════════════════════════
+       SHOPPING LIST MODAL
+       ═══════════════════════════════════════════ */
+    .shopping-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .shopping-modal-header h2 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 400;
+    }
+    .shopping-modal-close {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .shopping-modal-close:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .shopping-list-text {
+      white-space: pre-wrap;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.85;
+      background: var(--bg-page);
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-light);
+      max-height: 55vh;
+      overflow-y: auto;
+      color: var(--text-primary);
+    }
+    .copy-list-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-list-btn:hover { background: #a01f25; border-color: #a01f25; }
+    .copy-list-btn.copied { background: var(--green); border-color: var(--green); }
+
+    /* ═══════════════════════════════════════════
        PRINT STYLES
        ═══════════════════════════════════════════ */
     @media print {
@@ -1702,6 +1899,12 @@
         <button class="view-btn active" data-view="grid" onclick="setView('grid')">Grid</button>
         <button class="view-btn" data-view="list" onclick="setView('list')">List</button>
       </div>
+      <button class="cart-btn" id="cart-btn" onclick="toggleSelectionMode()" title="Generate a shopping list">&#128722; Shopping List</button>
+    </div>
+    <div class="selection-bar" id="selection-bar">
+      <span id="selection-count">0 recipes selected</span>
+      <button class="selection-generate-btn" id="generate-list-btn" onclick="generateShoppingList()" disabled>Generate Shopping List</button>
+      <button class="selection-cancel-btn" onclick="toggleSelectionMode()">&#10005; Cancel</button>
     </div>
     <div class="filter-row" id="filters">
       <span class="filter-label">Cuisine</span>
@@ -1881,6 +2084,15 @@
     let chatMessages = []; // conversation history for Claude API
     let currentChatId = null;
     let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+
+    // Recipe scaling state
+    let currentRecipe = null;
+    let currentServes = null;
+
+    // Shopping list selection state
+    let selectionMode = false;
+    let selectedSlugs = new Set();
+    let currentShoppingListText = '';
 
     // ═══════════════════════════════════════════
     // INIT — async, fetches from API with localStorage fallback
@@ -2098,8 +2310,13 @@
         const totalTime = r.totalTime || '';
         const serves = r.serves || '';
         const tags = r.tags || [];
+        const isSelected = selectedSlugs.has(r.slug);
+        const clickHandler = selectionMode
+          ? `toggleRecipeSelection('${r.slug}')`
+          : `openRecipe('${r.slug}')`;
         return `
-        <div class="card" onclick="openRecipe('${r.slug}')">
+        <div class="card${selectionMode ? ' selectable' : ''}${isSelected ? ' selected' : ''}" onclick="${clickHandler}" style="position:relative;">
+          ${selectionMode ? `<div class="card-checkbox${isSelected ? ' checked' : ''}">&#10003;</div>` : ''}
           ${r.photo
             ? `<img class="card-image" src="${r.photo}" alt="${r.title}" loading="lazy" onerror="this.outerHTML='<div class=\\'card-image-placeholder\\'>${r.title[0]}</div>'">`
             : `<div class="card-image-placeholder">${r.title[0]}</div>`
@@ -2191,24 +2408,16 @@
       r.ingredients = r.ingredients || [];
       r.instructions = r.instructions || [];
 
+      // Set scaling state
+      currentRecipe = r;
+      currentServes = r.serves;
+
       const isIncomplete = r.ingredients.length === 0 && r.instructions.length === 0;
 
       const mc = document.getElementById('modal-content');
 
-      // Build ingredients table
-      let ingRows = '';
-      r.ingredients.forEach(ing => {
-        if (ing.section) {
-          ingRows += `<tr class="ingredients-section-header"><td colspan="3">${ing.section}</td></tr>`;
-        } else {
-          const note = ing.note ? ` <span style="color:var(--text-muted);font-style:italic;font-size:0.75rem;">(${ing.note})</span>` : '';
-          ingRows += `<tr>
-            <td class="ing-item">${ing.item}${note}</td>
-            <td class="ing-cups">${ing.cups || ''}</td>
-            <td class="ing-grams">${ing.grams || ''}</td>
-          </tr>`;
-        }
-      });
+      // Build ingredients table using shared renderer (factor=1 = no scaling)
+      const ingRows = renderIngredientRows(r, 1);
 
       mc.innerHTML = `
         <div class="modal-hero" style="position:relative;">
@@ -2237,7 +2446,13 @@
               </div>
               <div class="modal-meta-cell">
                 <div class="modal-meta-label">Serves</div>
-                <div class="modal-meta-value">${r.serves || '—'}</div>
+                <div class="modal-meta-value">
+                  <div class="serves-adjuster">
+                    <button class="serves-btn" onclick="adjustServes(-1)" title="Fewer servings">&#8722;</button>
+                    <span id="modal-serves">${r.serves || '—'}</span>
+                    <button class="serves-btn" onclick="adjustServes(1)" title="More servings">&#43;</button>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="modal-stars-row">
@@ -2464,6 +2679,161 @@
           body: JSON.stringify({ title, subtitle })
         }).catch(() => { /* localStorage already saved above */ });
       }, 500);
+    }
+
+    // ═══════════════════════════════════════════
+    // RECIPE SCALING
+    // ═══════════════════════════════════════════
+    function renderIngredientRows(recipe, factor) {
+      factor = factor || 1;
+      let rows = '';
+      recipe.ingredients.forEach(ing => {
+        if (ing.section) {
+          rows += `<tr class="ingredients-section-header"><td colspan="3">${ing.section}</td></tr>`;
+        } else {
+          const note = ing.note ? ` <span style="color:var(--text-muted);font-style:italic;font-size:0.75rem;">(${ing.note})</span>` : '';
+          const scaledCups = factor === 1 ? (ing.cups || '') : scaleAmount(ing.cups, factor);
+          const scaledGrams = (ing.grams === undefined || ing.grams === null || ing.grams === '')
+            ? ''
+            : (typeof ing.grams === 'number' && factor !== 1)
+              ? Math.round(ing.grams * factor * 10) / 10
+              : ing.grams;
+          rows += `<tr>
+            <td class="ing-item">${ing.item}${note}</td>
+            <td class="ing-cups">${scaledCups}</td>
+            <td class="ing-grams">${scaledGrams}</td>
+          </tr>`;
+        }
+      });
+      return rows;
+    }
+
+    function scaleAmount(str, factor) {
+      if (!str || factor === 1) return str;
+      const s = String(str).trim();
+      // Match: "1 1/2 cups", "2 1/4 tsp", etc.
+      const mixed = s.match(/^(\d+)\s+(\d+)\/(\d+)(.*)/);
+      // Match: "1/2 cup", "3/4 tsp", etc.
+      const frac = s.match(/^(\d+)\/(\d+)(.*)/);
+      // Match: "2 cups", "1.5 lbs", "450", etc.
+      const decimal = s.match(/^(\d*\.?\d+)(.*)/);
+
+      let num, rest;
+      if (mixed)        { num = parseInt(mixed[1]) + parseInt(mixed[2]) / parseInt(mixed[3]); rest = mixed[4]; }
+      else if (frac)    { num = parseInt(frac[1]) / parseInt(frac[2]); rest = frac[3]; }
+      else if (decimal) { num = parseFloat(decimal[1]); rest = decimal[2]; }
+      else return str; // unparseable (e.g. "to taste", "as needed")
+
+      return formatFraction(num * factor) + rest;
+    }
+
+    function formatFraction(n) {
+      if (n <= 0) return '0';
+      const whole = Math.floor(n);
+      const frac = n - whole;
+      const knownFracs = [
+        [1/8, '⅛'], [1/4, '¼'], [1/3, '⅓'], [3/8, '⅜'],
+        [1/2, '½'], [5/8, '⅝'], [2/3, '⅔'], [3/4, '¾'], [7/8, '⅞']
+      ];
+      if (frac < 0.06) return String(whole || '');
+      if (frac > 0.94) return String(whole + 1);
+      for (const [val, sym] of knownFracs) {
+        if (Math.abs(frac - val) < 0.07) return whole > 0 ? `${whole} ${sym}` : sym;
+      }
+      // Fall back to 1 decimal place
+      return (Math.round(n * 10) / 10).toString();
+    }
+
+    function adjustServes(delta) {
+      const newServes = Math.max(1, currentServes + delta);
+      if (newServes === currentServes) return;
+      currentServes = newServes;
+      const factor = currentServes / currentRecipe.serves;
+      document.getElementById('modal-serves').textContent = currentServes;
+      document.querySelector('.ingredients-table tbody').innerHTML = renderIngredientRows(currentRecipe, factor);
+    }
+
+    // ═══════════════════════════════════════════
+    // SHOPPING LIST
+    // ═══════════════════════════════════════════
+    function toggleSelectionMode() {
+      selectionMode = !selectionMode;
+      if (!selectionMode) selectedSlugs.clear();
+      document.getElementById('selection-bar').classList.toggle('active', selectionMode);
+      document.getElementById('cart-btn').classList.toggle('active', selectionMode);
+      updateSelectionCount();
+      render();
+    }
+
+    function toggleRecipeSelection(slug) {
+      if (selectedSlugs.has(slug)) selectedSlugs.delete(slug);
+      else selectedSlugs.add(slug);
+      updateSelectionCount();
+      render();
+    }
+
+    function updateSelectionCount() {
+      const n = selectedSlugs.size;
+      document.getElementById('selection-count').textContent = `${n} recipe${n !== 1 ? 's' : ''} selected`;
+      document.getElementById('generate-list-btn').disabled = n === 0;
+    }
+
+    function generateShoppingList() {
+      const selected = recipes.filter(r => selectedSlugs.has(r.slug));
+      if (selected.length === 0) return;
+
+      const recipeNames = selected.map(r => r.title).join(', ');
+      const lines = [
+        '🛒 Shopping List',
+        recipeNames,
+        ''
+      ];
+
+      selected.forEach(recipe => {
+        (recipe.ingredients || []).forEach(ing => {
+          if (ing.section) return; // skip section headers
+          const amt = ing.cups ? `${ing.cups} ` : '';
+          const g = ing.grams !== undefined && ing.grams !== '' && ing.grams !== null
+            ? ` (${typeof ing.grams === 'number' ? ing.grams + 'g' : ing.grams})`
+            : '';
+          lines.push(`• ${amt}${ing.item}${g}`);
+        });
+      });
+
+      currentShoppingListText = lines.join('\n');
+      showShoppingListModal(currentShoppingListText, recipeNames, selected.length);
+    }
+
+    function showShoppingListModal(text, recipeNames, count) {
+      const mc = document.getElementById('modal-content');
+      mc.innerHTML = `
+        <div style="padding: 2rem 2rem 2.5rem;">
+          <h2 style="font-family:var(--font-serif);font-size:1.6rem;font-weight:400;margin-bottom:1rem;">Shopping List</h2>
+          <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1rem;">${count} recipe${count !== 1 ? 's' : ''} &mdash; ${recipeNames}</p>
+          <pre class="shopping-list-text" id="shopping-list-pre">${text}</pre>
+          <button class="copy-list-btn" id="copy-list-btn" onclick="copyShoppingList()">
+            &#128203; Copy to Clipboard
+          </button>
+        </div>
+      `;
+      document.getElementById('modal-overlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function copyShoppingList() {
+      navigator.clipboard.writeText(currentShoppingListText).then(() => {
+        const btn = document.getElementById('copy-list-btn');
+        if (btn) {
+          btn.textContent = '✓ Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.innerHTML = '&#128203; Copy to Clipboard';
+            btn.classList.remove('copied');
+          }, 2500);
+        }
+      }).catch(() => {
+        showToast('Copy failed — select text manually');
+      });
     }
 
     // ═══════════════════════════════════════════
